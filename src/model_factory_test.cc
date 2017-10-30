@@ -20,9 +20,9 @@ namespace sentencepiece {
 TEST(ModelFactoryTest, BasicTest) {
   ModelProto model_proto;
 
-  auto *sp1 = model_proto.add_pieces();
   auto *sp2 = model_proto.add_pieces();
   auto *sp3 = model_proto.add_pieces();
+  auto *sp1 = model_proto.add_pieces();
 
   sp1->set_type(ModelProto::SentencePiece::UNKNOWN);
   sp1->set_piece("<unk>");
