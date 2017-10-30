@@ -234,17 +234,17 @@ void TrainerInterface::Serialize(ModelProto *model_proto) const {
     CHECK(dup.insert(piece).second) << piece << " is already defined";
   };
 
-  auto *unk = model_proto->add_pieces();
-  unk->set_piece("<unk>");
-  unk->set_type(ModelProto::SentencePiece::UNKNOWN);
-  CheckPiece(unk->piece());
-
   for (const auto &w : {"<s>", "</s>"}) {
     auto *sp = model_proto->add_pieces();
     sp->set_piece(w);
     sp->set_type(ModelProto::SentencePiece::CONTROL);
     CheckPiece(sp->piece());
   }
+
+  auto *unk = model_proto->add_pieces();
+  unk->set_piece("<unk>");
+  unk->set_type(ModelProto::SentencePiece::UNKNOWN);
+  CheckPiece(unk->piece());
 
   for (const auto &w : trainer_spec_.control_symbols()) {
     auto *sp = model_proto->add_pieces();

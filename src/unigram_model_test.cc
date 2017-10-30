@@ -258,9 +258,9 @@ TEST(LatticeTest, PopulateMarginalTest) {
 
 ModelProto MakeBaseModelProto() {
   ModelProto model_proto;
-  auto *sp1 = model_proto.add_pieces();
   auto *sp2 = model_proto.add_pieces();
   auto *sp3 = model_proto.add_pieces();
+  auto *sp1 = model_proto.add_pieces();
 
   sp1->set_type(ModelProto::SentencePiece::UNKNOWN);
   sp1->set_piece("<unk>");
@@ -306,35 +306,35 @@ TEST(UnigramModelTest, PieceToIdTest) {
 
   EXPECT_NEAR(0.1, model.min_score(), 0.001);
 
-  EXPECT_EQ(0, model.PieceToId("<unk>"));
-  EXPECT_EQ(1, model.PieceToId("<s>"));
-  EXPECT_EQ(2, model.PieceToId("</s>"));
+  EXPECT_EQ(2, model.PieceToId("<unk>"));
+  EXPECT_EQ(0, model.PieceToId("<s>"));
+  EXPECT_EQ(1, model.PieceToId("</s>"));
   EXPECT_EQ(3, model.PieceToId("a"));
   EXPECT_EQ(4, model.PieceToId("b"));
   EXPECT_EQ(5, model.PieceToId("c"));
   EXPECT_EQ(6, model.PieceToId("d"));
-  EXPECT_EQ(0, model.PieceToId("e"));  // unk
-  EXPECT_EQ(0, model.PieceToId(""));   // unk
+  EXPECT_EQ(2, model.PieceToId("e"));  // unk
+  EXPECT_EQ(2, model.PieceToId(""));   // unk
 
-  EXPECT_EQ("<unk>", model.IdToPiece(0));
-  EXPECT_EQ("<s>", model.IdToPiece(1));
-  EXPECT_EQ("</s>", model.IdToPiece(2));
+  EXPECT_EQ("<unk>", model.IdToPiece(2));
+  EXPECT_EQ("<s>", model.IdToPiece(0));
+  EXPECT_EQ("</s>", model.IdToPiece(1));
   EXPECT_EQ("a", model.IdToPiece(3));
   EXPECT_EQ("b", model.IdToPiece(4));
   EXPECT_EQ("c", model.IdToPiece(5));
   EXPECT_EQ("d", model.IdToPiece(6));
 
-  EXPECT_TRUE(model.IsUnknown(0));
+  EXPECT_TRUE(model.IsUnknown(2));
+  EXPECT_FALSE(model.IsUnknown(0));
   EXPECT_FALSE(model.IsUnknown(1));
-  EXPECT_FALSE(model.IsUnknown(2));
   EXPECT_FALSE(model.IsUnknown(3));
   EXPECT_FALSE(model.IsUnknown(4));
   EXPECT_FALSE(model.IsUnknown(5));
   EXPECT_FALSE(model.IsUnknown(6));
 
-  EXPECT_FALSE(model.IsControl(0));
+  EXPECT_FALSE(model.IsControl(2));
+  EXPECT_TRUE(model.IsControl(0));
   EXPECT_TRUE(model.IsControl(1));
-  EXPECT_TRUE(model.IsControl(2));
   EXPECT_FALSE(model.IsControl(3));
   EXPECT_FALSE(model.IsControl(4));
   EXPECT_FALSE(model.IsControl(5));
@@ -364,9 +364,9 @@ TEST(UnigramModelTest, PopulateNodesAllUnknownsTest) {
   EXPECT_EQ(1, lattice.begin_nodes(1).size());
   EXPECT_EQ(1, lattice.begin_nodes(2).size());
 
-  EXPECT_EQ(0, lattice.begin_nodes(0)[0]->id);
-  EXPECT_EQ(0, lattice.begin_nodes(1)[0]->id);
-  EXPECT_EQ(0, lattice.begin_nodes(2)[0]->id);
+  EXPECT_EQ(2, lattice.begin_nodes(0)[0]->id);
+  EXPECT_EQ(2, lattice.begin_nodes(1)[0]->id);
+  EXPECT_EQ(2, lattice.begin_nodes(2)[0]->id);
 }
 
 TEST(UnigramModelTest, PopulateNodesTest) {
@@ -392,7 +392,7 @@ TEST(UnigramModelTest, PopulateNodesTest) {
   EXPECT_EQ(5, lattice.begin_nodes(0)[1]->id);
   EXPECT_EQ(4, lattice.begin_nodes(1)[0]->id);
   EXPECT_EQ(6, lattice.begin_nodes(1)[1]->id);
-  EXPECT_EQ(0, lattice.begin_nodes(2)[0]->id);
+  EXPECT_EQ(2, lattice.begin_nodes(2)[0]->id);
 
   EXPECT_NEAR(0.1, lattice.begin_nodes(0)[0]->score, 0.001);
   EXPECT_NEAR(0.3, lattice.begin_nodes(0)[1]->score, 0.001);

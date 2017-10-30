@@ -68,7 +68,7 @@ TEST(UnigramTrainerTest, EndToEndTest) {
             " 吾輩 《 わが はい 》 は 猫 である 。 名前 はまだ 無い 。 "
             "どこ で 生 れた か とん と 見当 《 けん とう 》 が つか ぬ 。 "
             "何でも 薄 暗 い じめ じめ した 所で ニャーニャー "
-            "泣 い ていた 事 だけは 記憶 している 。",
+            "泣 いて いた 事 だけは 記憶 している 。",
             string_util::Join(tok, " "));
 }
 }  // namespace unigram

@@ -264,8 +264,8 @@ bool SentencePieceProcessor::IsUnknown(int id) const {
 void SentencePieceProcessor::ApplyExtraOptions(
     const std::vector<ExtraOption> &extra_options,
     SentencePieceText *spt) const {
-  constexpr int kBOS = 1;
-  constexpr int kEOS = 2;
+  constexpr int kBOS = 0;
+  constexpr int kEOS = 1;
 
   for (const auto &extra_option : extra_options) {
     switch (extra_option) {

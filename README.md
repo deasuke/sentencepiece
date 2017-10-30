@@ -76,9 +76,9 @@ The following tools and libraries are required to build SentencePiece:
 
 On Ubuntu, autotools and protobuf library can be installed with apt-get:
 ```
-% sudo apt-get install autoconf automake libtool libprotobuf9v5 protobuf-compiler libprotobuf-dev
+% sudo apt-get install autoconf automake libtool libprotobuf-c++ protobuf-compiler libprotobuf-dev pkg-config
 ```
-(If `libprotobuf9v5` is not found, try `libprotobuf-c++` instead.)
+(Fixed)
 
 On OSX, you can use brew:
 ```

@@ -27,9 +27,9 @@ const std::vector<TrainerSpec::ModelType> kModelTypes = {
 
 ModelProto MakeBaseModelProto(TrainerSpec::ModelType type) {
   ModelProto model_proto;
-  auto *sp1 = model_proto.add_pieces();
   auto *sp2 = model_proto.add_pieces();
   auto *sp3 = model_proto.add_pieces();
+  auto *sp1 = model_proto.add_pieces();
   model_proto.mutable_trainer_spec()->set_model_type(type);
 
   sp1->set_type(ModelProto::SentencePiece::UNKNOWN);
@@ -77,43 +77,43 @@ TEST(ModelInterfaceTest, PieceToIdTest) {
     EXPECT_EQ(model_proto.SerializeAsString(),
               model->model_proto().SerializeAsString());
 
-    EXPECT_EQ(0, model->PieceToId("<unk>"));
-    EXPECT_EQ(1, model->PieceToId("<s>"));
-    EXPECT_EQ(2, model->PieceToId("</s>"));
+    EXPECT_EQ(2, model->PieceToId("<unk>"));
+    EXPECT_EQ(0, model->PieceToId("<s>"));
+    EXPECT_EQ(1, model->PieceToId("</s>"));
     EXPECT_EQ(3, model->PieceToId("a"));
     EXPECT_EQ(4, model->PieceToId("b"));
     EXPECT_EQ(5, model->PieceToId("c"));
     EXPECT_EQ(6, model->PieceToId("d"));
-    EXPECT_EQ(0, model->PieceToId("e"));  // unk
-    EXPECT_EQ(0, model->PieceToId(""));   // unk
+    EXPECT_EQ(2, model->PieceToId("e"));  // unk
+    EXPECT_EQ(2, model->PieceToId(""));   // unk
 
-    EXPECT_EQ("<unk>", model->IdToPiece(0));
-    EXPECT_EQ("<s>", model->IdToPiece(1));
-    EXPECT_EQ("</s>", model->IdToPiece(2));
+    EXPECT_EQ("<unk>", model->IdToPiece(2));
+    EXPECT_EQ("<s>", model->IdToPiece(0));
+    EXPECT_EQ("</s>", model->IdToPiece(1));
     EXPECT_EQ("a", model->IdToPiece(3));
     EXPECT_EQ("b", model->IdToPiece(4));
     EXPECT_EQ("c", model->IdToPiece(5));
     EXPECT_EQ("d", model->IdToPiece(6));
 
-    EXPECT_TRUE(model->IsUnknown(0));
+    EXPECT_TRUE(model->IsUnknown(2));
+    EXPECT_FALSE(model->IsUnknown(0));
     EXPECT_FALSE(model->IsUnknown(1));
-    EXPECT_FALSE(model->IsUnknown(2));
     EXPECT_FALSE(model->IsUnknown(3));
     EXPECT_FALSE(model->IsUnknown(4));
     EXPECT_FALSE(model->IsUnknown(5));
     EXPECT_FALSE(model->IsUnknown(6));
 
-    EXPECT_FALSE(model->IsControl(0));
+    EXPECT_FALSE(model->IsControl(2));
+    EXPECT_TRUE(model->IsControl(0));
     EXPECT_TRUE(model->IsControl(1));
-    EXPECT_TRUE(model->IsControl(2));
     EXPECT_FALSE(model->IsControl(3));
     EXPECT_FALSE(model->IsControl(4));
     EXPECT_FALSE(model->IsControl(5));
     EXPECT_FALSE(model->IsControl(6));
 
+    EXPECT_NEAR(0, model->GetScore(2), 0.0001);
     EXPECT_NEAR(0, model->GetScore(0), 0.0001);
     EXPECT_NEAR(0, model->GetScore(1), 0.0001);
-    EXPECT_NEAR(0, model->GetScore(2), 0.0001);
     EXPECT_NEAR(0.1, model->GetScore(3), 0.0001);
     EXPECT_NEAR(0.2, model->GetScore(4), 0.0001);
     EXPECT_NEAR(0.3, model->GetScore(5), 0.0001);

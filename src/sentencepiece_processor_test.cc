@@ -377,9 +377,9 @@ TEST(SentencePieceProcessorTest, LoadInvalidModelTest) {
 
 TEST(SentencePieceProcessorTest, EndToEndTest) {
   ModelProto model_proto;
-  auto *sp1 = model_proto.add_pieces();
   auto *sp2 = model_proto.add_pieces();
   auto *sp3 = model_proto.add_pieces();
+  auto *sp1 = model_proto.add_pieces();
 
   sp1->set_type(ModelProto::SentencePiece::UNKNOWN);
   sp1->set_piece("<unk>");
@@ -410,18 +410,18 @@ TEST(SentencePieceProcessorTest, EndToEndTest) {
             sp.model_proto().SerializeAsString());
 
   EXPECT_EQ(8, sp.GetPieceSize());
-  EXPECT_EQ(0, sp.PieceToId("<unk>"));
-  EXPECT_EQ(1, sp.PieceToId("<s>"));
-  EXPECT_EQ(2, sp.PieceToId("</s>"));
+  EXPECT_EQ(2, sp.PieceToId("<unk>"));
+  EXPECT_EQ(0, sp.PieceToId("<s>"));
+  EXPECT_EQ(1, sp.PieceToId("</s>"));
   EXPECT_EQ(3, sp.PieceToId("a"));
   EXPECT_EQ(4, sp.PieceToId("b"));
   EXPECT_EQ(5, sp.PieceToId("c"));
   EXPECT_EQ(6, sp.PieceToId("ab"));
   EXPECT_EQ(7, sp.PieceToId("\xE2\x96\x81"));
 
-  EXPECT_EQ("<unk>", sp.IdToPiece(0));
-  EXPECT_EQ("<s>", sp.IdToPiece(1));
-  EXPECT_EQ("</s>", sp.IdToPiece(2));
+  EXPECT_EQ("<unk>", sp.IdToPiece(2));
+  EXPECT_EQ("<s>", sp.IdToPiece(0));
+  EXPECT_EQ("</s>", sp.IdToPiece(1));
   EXPECT_EQ("a", sp.IdToPiece(3));
   EXPECT_EQ("b", sp.IdToPiece(4));
   EXPECT_EQ("c", sp.IdToPiece(5));
@@ -437,18 +437,18 @@ TEST(SentencePieceProcessorTest, EndToEndTest) {
   EXPECT_NEAR(1.0, sp.GetScore(6), 0.001);
   EXPECT_NEAR(3.0, sp.GetScore(7), 0.001);
 
-  EXPECT_TRUE(sp.IsUnknown(0));
+  EXPECT_TRUE(sp.IsUnknown(2));
+  EXPECT_FALSE(sp.IsUnknown(0));
   EXPECT_FALSE(sp.IsUnknown(1));
-  EXPECT_FALSE(sp.IsUnknown(2));
   EXPECT_FALSE(sp.IsUnknown(3));
   EXPECT_FALSE(sp.IsUnknown(4));
   EXPECT_FALSE(sp.IsUnknown(5));
   EXPECT_FALSE(sp.IsUnknown(6));
   EXPECT_FALSE(sp.IsUnknown(7));
 
-  EXPECT_FALSE(sp.IsControl(0));
+  EXPECT_FALSE(sp.IsControl(2));
+  EXPECT_TRUE(sp.IsControl(0));
   EXPECT_TRUE(sp.IsControl(1));
-  EXPECT_TRUE(sp.IsControl(2));
   EXPECT_FALSE(sp.IsControl(3));
   EXPECT_FALSE(sp.IsControl(4));
   EXPECT_FALSE(sp.IsControl(5));
@@ -473,10 +473,11 @@ TEST(SentencePieceProcessorTest, EndToEndTest) {
     std::vector<std::string> sps;
     const std::vector<std::string> expected_str = {"<s>", WS, "ab", "c"};
     sp.Encode("abc", &sps);
+    std::cout << "sps = " << sps << std::endl;
     EXPECT_EQ(expected_str, sps);
 
     std::vector<int> ids;
-    const std::vector<int> expected_id = {1, 7, 6, 5};
+    const std::vector<int> expected_id = {0, 7, 6, 5};
     sp.Encode("abc", &ids);
     EXPECT_EQ(expected_id, ids);
   }
@@ -490,7 +491,7 @@ TEST(SentencePieceProcessorTest, EndToEndTest) {
     EXPECT_EQ(expected_str, sps);
 
     std::vector<int> ids;
-    const std::vector<int> expected_id = {7, 6, 5, 2};
+    const std::vector<int> expected_id = {7, 6, 5, 1};
     sp.Encode("abc", &ids);
     EXPECT_EQ(expected_id, ids);
   }
@@ -519,7 +520,7 @@ TEST(SentencePieceProcessorTest, EndToEndTest) {
     EXPECT_EQ(expected_str, sps);
 
     std::vector<int> ids;
-    const std::vector<int> expected_id = {1, 7, 6, 5, 2};
+    const std::vector<int> expected_id = {0, 7, 6, 5, 1};
     sp.Encode("abc", &ids);
     EXPECT_EQ(expected_id, ids);
   }
@@ -534,7 +535,7 @@ TEST(SentencePieceProcessorTest, EndToEndTest) {
     EXPECT_EQ(expected_str, sps);
 
     std::vector<int> ids;
-    const std::vector<int> expected_id = {1, 5, 6, 7, 2};
+    const std::vector<int> expected_id = {0, 5, 6, 7, 1};
     sp.Encode("abc", &ids);
     EXPECT_EQ(expected_id, ids);
   }
@@ -549,7 +550,7 @@ TEST(SentencePieceProcessorTest, EndToEndTest) {
     EXPECT_EQ(expected_str, sps);
 
     std::vector<int> ids;
-    const std::vector<int> expected_id = {2, 5, 6, 7, 1};
+    const std::vector<int> expected_id = {1, 5, 6, 7, 0};
     sp.Encode("abc", &ids);
     EXPECT_EQ(expected_id, ids);
   }
