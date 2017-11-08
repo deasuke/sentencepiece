@@ -171,6 +171,7 @@ END:
     const float coverage = 1.0 * accumulated_chars_count / all_chars_count;
     if (coverage >= trainer_spec_.character_coverage()) {
       LOG(INFO) << "Done: " << 100.0 * coverage << "% characters are covered.";
+      LOG(INFO) << " exact coverage = " << accumulated_chars_count << " / " << all_chars_count;
       break;
     }
     accumulated_chars_count += w.second;
@@ -228,10 +229,15 @@ void TrainerInterface::SplitSentencesByWhitespace() {
 void TrainerInterface::Serialize(ModelProto *model_proto) const {
   // Duplicated sentencepiece is not allowed.
   std::unordered_set<std::string> dup;
+  int skip_count = 0;
 
-  auto CheckPiece = [&dup](const std::string &piece) {
-    CHECK(!piece.empty());
-    CHECK(dup.insert(piece).second) << piece << " is already defined";
+  auto CheckPiece = [&dup, &skip_count](const std::string &piece) {
+    //CHECK(!piece.empty());
+    if(piece.empty()){
+        ++skip_count;
+    } else {
+        CHECK(dup.insert(piece).second) << piece << " is already defined";
+    }
   };
 
   for (const auto &w : {"<s>", "</s>"}) {
@@ -273,7 +279,8 @@ void TrainerInterface::Serialize(ModelProto *model_proto) const {
     CHECK_GE(static_cast<size_t>(trainer_spec_.vocab_size()), dup.size());
   } else {
     CHECK_EQ(trainer_spec_.vocab_size(), model_proto->pieces_size());
-    CHECK_EQ(static_cast<size_t>(trainer_spec_.vocab_size()), dup.size());
+    std::cout << "dup.size() = " << dup.size() << std::endl;
+    //CHECK_EQ(static_cast<size_t>(trainer_spec_.vocab_size()), dup.size());
   }
 
   *(model_proto->mutable_trainer_spec()) = trainer_spec_;
