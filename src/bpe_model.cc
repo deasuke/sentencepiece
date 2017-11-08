@@ -26,7 +26,7 @@ Model::Model(const ModelProto &model_proto) {
 
   for (int i = 0; i < model_proto_->pieces_size(); ++i) {
     const auto &sp = model_proto_->pieces(i);
-    CHECK(!sp.piece().empty());
+    //CHECK(!sp.piece().empty());
     if (sp.type() == ModelProto::SentencePiece::NORMAL) {
       CHECK(sp.has_score());
       port::InsertOrDie(&pieces_, sp.piece(), i);
